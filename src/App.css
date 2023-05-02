@@ -1,0 +1,47 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
+  font-size: 1em;
+}
+body{
+  background: rgb(2,0,36);
+  background: linear-gradient(77deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%); 
+}
+
+.hero-section{
+  height: 80vh;
+  /* background-color: rgb(235, 161, 161); */
+
+}
+.hero-section .container,.hero-section .row{
+  height: 100%;
+
+}
+.hero-text{
+  display: flex;
+  align-items: center;
+  
+  color: white;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700;
+  font-size: 4em;
+  text-align: left;
+}
+.hero-img{
+  /* width:min-content; */
+  width: 100%;
+  max-height: 80%;
+  border-radius: 0px 0px 100px 100px;
+}
+
+.action-section{
+  height: 80vh;
+}
+.upload-photo,.select-camera{
+  background-color: white;
+  
+}
