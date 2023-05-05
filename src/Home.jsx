@@ -84,7 +84,7 @@ function Home() {
                 // Send the image to the server using fetch or XMLHttpRequest
                 const formData = new FormData();
                 formData.append("image", blob, "image.jpg");
-                fetch("http://localhost:8080", { method: "POST", body: formData });
+                fetch("http://localhost:7000", { method: "POST", body: formData });
             }, "image/jpeg", 0.9);
         }, 1000);
 
@@ -100,6 +100,32 @@ function Home() {
         videoSelect.onchange = getStream;
         videoSelect.onClick = getStream().then(getDevices).then(gotDevices);
     }
+    function handlePhotos(event) {
+        const file = event.target.files[0];
+      
+        // Check if uploaded file is an image
+        if (!file.type.match('image.*')) {
+          console.log('Please upload an image file.');
+          return;
+        }
+      
+        // Send image to backend server
+        const formData = new FormData();
+        formData.append('photo', file);
+      
+        fetch('http://localhost:7000', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => {
+          // Handle response from server
+          console.log(response);
+        })
+        .catch(error => {
+          // Handle error from server
+          console.error(error);
+        });
+      }
 
     return (
         <div className="App">
@@ -124,7 +150,7 @@ function Home() {
                         <Col className="upload-photo mx-3 my-3 py-3 px-3 rounded">
                             <Form.Group controlId="formFile" className="mb-3">
                                 <Form.Label className='h3 my-3'>Upload Photo</Form.Label>
-                                <Form.Control type="file" />
+                                <Form.Control type="file" onChange={(e)=>{handlePhotos(e)}}/>
                             </Form.Group>
                         </Col>
                         <Col className='select-camera mx-3 my-3 py-3 px-3 rounded'>
