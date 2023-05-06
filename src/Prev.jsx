@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const TableRow = ({ file, timestamp, value }) => {
+const TableRow = ({ filename, timestamp, detected_URL}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => setIsOpen(!isOpen);
@@ -8,19 +8,19 @@ const TableRow = ({ file, timestamp, value }) => {
   return (
     <>
       <tr onClick={handleClick}>
-        <td>{file}</td>
+        <td>{filename}</td>
         <td>{timestamp}</td>
-        <td>{value}</td>
       </tr>
       {isOpen && (
         <tr>
           <td colSpan="3">
             <img
-              src={`http://localhost:8080/${file}`}
-              alt={file}
-              style={{ maxHeight: "200px", maxWidth: "200px" }}
+              src={detected_URL}
+              
+              style={{ maxHeight: "200px", maxWidth: "200px",minHeight: "200px", minWidth: "200px" }}
             />
           </td>
+          
         </tr>
       )}
     </>
@@ -32,9 +32,9 @@ const Table = ({ data }) => {
     <table>
       <thead>
         <tr>
-          <th>File</th>
+          <th>Filename</th>
           <th>Timestamp</th>
-          <th>Value</th>
+          <th>Detected Image</th>
         </tr>
       </thead>
       <tbody>
@@ -50,9 +50,11 @@ const Prev = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("/api/data")
+    fetch("http://localhost:7000/detect/viewImages")
       .then((response) => response.json())
-      .then((json) => setData(json))
+      .then((json) => {
+        console.log(json)
+        setData(json.imageDB)})
       .catch((error) => console.error(error));
   }, []);
 

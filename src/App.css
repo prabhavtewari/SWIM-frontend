@@ -45,7 +45,8 @@ body{
   background-color: white;  
 }
 video, .opImg{
-  max-width: 100%;
+  display: inline-block;
+  max-width: 48%;
   max-height: 50vh;
   margin-top: 15px;
   border: 2px solid black;
@@ -56,4 +57,8 @@ video, .opImg{
 
 #videoSource, video{
   display: none;
+}
+
+table{
+  color: aliceblue;
 }

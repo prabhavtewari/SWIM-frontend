@@ -84,8 +84,8 @@ function Home() {
             canvas.toBlob((blob) => {
                 // Send the image to the server using fetch or XMLHttpRequest
                 const formData = new FormData();
-                formData.append("image", blob, "image.jpg");
-                fetch("http://localhost:7000/", { method: "POST", body: formData })
+                formData.append("photo", blob, "image.jpg");
+                fetch("http://localhost:7000/detect/uploadFile", { method: "POST", body: formData })
                     .then(response => {
                         // Handle response from server
                         response.json().then(res => {
@@ -99,7 +99,7 @@ function Home() {
                         console.error(error);
                     });
             }, "image/jpeg", 0.9);
-        }, 1000);
+        }, 10000);
 
 
     }
