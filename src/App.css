@@ -44,14 +44,16 @@ body{
 .upload-photo,.select-camera{
   background-color: white;  
 }
-video{
+video, .opImg{
   max-width: 100%;
   max-height: 50vh;
   margin-top: 15px;
   border: 2px solid black;
   border-radius: 10px;
-  display: none;
+  margin-bottom: 30px;
+
 }
-#videoSource{
+
+#videoSource, video{
   display: none;
 }

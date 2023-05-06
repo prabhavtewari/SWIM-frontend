@@ -8,8 +8,8 @@ import hero_img from "./assets/hero-img.png"
 function Home() {
     const [count, setCount] = useState(0)
     const [path, setPath] = useState("")
+    const [opPath, setOpPath] = useState("")
     const vidRef = useRef()
-    const imgRef = useRef()
     var videoSelect = null;
     var videoElement = useRef();
     const [imageData, setImageData] = useState(null);
@@ -102,6 +102,8 @@ function Home() {
         videoSelect.onClick = getStream().then(getDevices).then(gotDevices);
     }
     async function handlePhotos(event) {
+        
+        
         const file = event.target.files[0];
       
         // Check if uploaded file is an image
@@ -122,7 +124,7 @@ function Home() {
           // Handle response from server
           response.json().then( res =>{
             console.log(res);
-            imgRef.current.ref=res.file_path;
+            setOpPath(res.file_path);
           });
           
         })
@@ -172,7 +174,7 @@ function Home() {
                         <Button variant="outline-light w-100" onClick={(e) => console.log("Redirect")}>View Previously Analysed Images</Button>
                     </Link>
                     <video autoPlay muted playsInline ref={videoElement}></video>
-                    <img ref={imgRef} alt="" />
+                    <img src={opPath} className='opImg' alt="" />
                 </Container>
             </section>
             {/* <div>
