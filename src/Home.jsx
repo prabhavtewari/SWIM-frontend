@@ -9,6 +9,7 @@ function Home() {
     const [count, setCount] = useState(0)
     const [path, setPath] = useState("")
     const vidRef = useRef()
+    const imgRef = useRef()
     var videoSelect = null;
     var videoElement = useRef();
     const [imageData, setImageData] = useState(null);
@@ -84,7 +85,7 @@ function Home() {
                 // Send the image to the server using fetch or XMLHttpRequest
                 const formData = new FormData();
                 formData.append("image", blob, "image.jpg");
-                fetch("http://localhost:7000", { method: "POST", body: formData });
+                fetch("http://localhost:7000/", { method: "POST", body: formData });
             }, "image/jpeg", 0.9);
         }, 1000);
 
@@ -100,7 +101,7 @@ function Home() {
         videoSelect.onchange = getStream;
         videoSelect.onClick = getStream().then(getDevices).then(gotDevices);
     }
-    function handlePhotos(event) {
+    async function handlePhotos(event) {
         const file = event.target.files[0];
       
         // Check if uploaded file is an image
@@ -113,13 +114,17 @@ function Home() {
         const formData = new FormData();
         formData.append('photo', file);
       
-        fetch('http://localhost:7000', {
+        fetch('http://localhost:7000/detect/uploadFile', {
           method: 'POST',
           body: formData
         })
         .then(response => {
           // Handle response from server
-          console.log(response);
+          response.json().then( res =>{
+            console.log(res);
+            imgRef.current.ref=res.file_path;
+          });
+          
         })
         .catch(error => {
           // Handle error from server
@@ -167,7 +172,7 @@ function Home() {
                         <Button variant="outline-light w-100" onClick={(e) => console.log("Redirect")}>View Previously Analysed Images</Button>
                     </Link>
                     <video autoPlay muted playsInline ref={videoElement}></video>
-
+                    <img ref={imgRef} alt="" />
                 </Container>
             </section>
             {/* <div>
