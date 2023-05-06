@@ -7,29 +7,18 @@ import hero_img from "./assets/hero-img.png"
 
 function Home() {
     const [count, setCount] = useState(0)
-    const [path, setPath] = useState("")
+    const [loading, setLoading] = useState(false)
     const [opPath, setOpPath] = useState("")
     const vidRef = useRef()
     var videoSelect = null;
     var videoElement = useRef();
     const [imageData, setImageData] = useState(null);
 
-    const loadImage = async () => {
-        const response = await fetch('http://127.0.0.1:8080/img1.jpg');
-        const blob = await response.blob();
-        const dataUrl = URL.createObjectURL(blob);
-        setImageData(dataUrl);
-    }
-
 
     useEffect(() => {
         if (!vidRef.current) return
         videoSelect = vidRef.current
-
     }, [vidRef])
-
-
-
 
 
     function getDevices() {
@@ -70,38 +59,41 @@ function Home() {
         videoSelect.selectedIndex = [...videoSelect.options].
             findIndex(option => option.text === stream.getVideoTracks()[0].label);
         videoElement.current.srcObject = stream;
-        videoElement.current.style.display = "inline-block"
-
+        videoElement.current.style.display = "block"
         setInterval(() => {
-            // Create a canvas element to draw the video frame
-            const canvas = document.createElement("canvas");
-            canvas.width = videoElement.current.videoWidth;
-            canvas.height = videoElement.current.videoHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(videoElement.current, 0, 0, canvas.width, canvas.height);
-
-            // Get the image data from the canvas and convert it to a Blob
-            canvas.toBlob((blob) => {
-                // Send the image to the server using fetch or XMLHttpRequest
-                const formData = new FormData();
-                formData.append("photo", blob, "image.jpg");
-                fetch("http://localhost:7000/detect/uploadFile", { method: "POST", body: formData })
-                    .then(response => {
-                        // Handle response from server
-                        response.json().then(res => {
-                            console.log(res);
-                            setOpPath(res.file_path);
-                        });
-
-                    })
-                    .catch(error => {
-                        // Handle error from server
-                        console.error(error);
-                    });
-            }, "image/jpeg", 0.9);
+            sendVideoSnapshot()
         }, 10000);
 
 
+    }
+    function sendVideoSnapshot() {
+        // Create a canvas element to draw the video frame
+        const canvas = document.createElement("canvas");
+        canvas.width = videoElement.current.videoWidth;
+        canvas.height = videoElement.current.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(videoElement.current, 0, 0, canvas.width, canvas.height);
+
+        // Get the image data from the canvas and convert it to a Blob
+        canvas.toBlob((blob) => {
+            // Send the image to the server using fetch or XMLHttpRequest
+            const formData = new FormData();
+            formData.append("photo", blob, "VideoSnapshot.jpg");
+            fetch("http://localhost:7000/detect/uploadFile", { method: "POST", body: formData })
+                .then(response => {
+                    // Handle response from server
+                    response.json().then(res => {
+                        console.log(res);
+                        setOpPath(res.file_path);
+                        console.log("Pah set to "+ opPath + "from video")
+                    });
+
+                })
+                .catch(error => {
+                    // Handle error from server
+                    console.error(error);
+                });
+        }, "image/jpeg", 0.9);
     }
 
     function handleError(error) {
@@ -115,7 +107,7 @@ function Home() {
     }
     async function handlePhotos(event) {
 
-
+        setLoading(true)
         const file = event.target.files[0];
 
         // Check if uploaded file is an image
@@ -137,26 +129,23 @@ function Home() {
                 response.json().then(res => {
                     console.log(res);
                     setOpPath(res.file_path);
+                    setLoading(false)
                 });
 
             })
             .catch(error => {
                 // Handle error from server
                 console.error(error);
-            });
+                setLoading(false)
+            })
+
     }
 
-    function formatUrl(url) {
-        // Replace backslashes with forward slashes
-        url = url.replace(/[\\]/g, '/');
-        // Replace colon after http with double forward slashes
-        url = url.replace(/[":/"]/g, '://');
-        // Return formatted URL
-        return url;
-    }
 
     return (
-        <div className="App">
+        <div>
+            {loading && <div className="overlay">Loading...</div>}
+
             <section className='hero-section'>
                 <Container>
                     <Row>
@@ -194,14 +183,13 @@ function Home() {
                     <Link to="prev">
                         <Button variant="outline-light w-100" onClick={(e) => console.log("Redirect")}>View Previously Analysed Images</Button>
                     </Link>
-                    <video autoPlay muted playsInline ref={videoElement}></video>
-                    <img src={opPath} className='opImg' alt="" />
+                    <div className='outputs'>
+                        <video autoPlay muted playsInline ref={videoElement}></video>
+                        <img src={opPath} className='opImg' alt="" />
+                    </div>
                 </Container>
             </section>
-            {/* <div>
-        <button onClick={loadImage}>Load Image</button>
-        {imageData && <img src={imageData} alt="My Image" />}
-      </div> */}
+
         </div>
     )
 }

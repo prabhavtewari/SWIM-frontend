@@ -1,35 +1,48 @@
 import React, { useEffect, useState } from "react";
+import Table from "react-bootstrap/Table"
 
-const TableRow = ({ filename, timestamp, detected_URL}) => {
-  const [isOpen, setIsOpen] = useState(false);
+const TableRow = ({ filename, timestamp, detected_URL }) => {
+  
+  function formatDate(timestamp) {
+    const date = new Date(timestamp*1);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const seconds = date.getSeconds().toString().padStart(2, "0");
+    const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  
+    return formattedDate;
+  }
+  
 
-  const handleClick = () => setIsOpen(!isOpen);
+  
 
   return (
     <>
-      <tr onClick={handleClick}>
+      <tr>
         <td>{filename}</td>
-        <td>{timestamp}</td>
+        <td>{formatDate(timestamp)}</td>
+
+        <td colSpan="3">
+          <img
+            src={detected_URL}
+
+            style={{ maxHeight: "200px" }}
+          />
+        </td>
       </tr>
-      {isOpen && (
-        <tr>
-          <td colSpan="3">
-            <img
-              src={detected_URL}
-              
-              style={{ maxHeight: "200px", maxWidth: "200px",minHeight: "200px", minWidth: "200px" }}
-            />
-          </td>
-          
-        </tr>
-      )}
+
+
     </>
   );
 };
 
-const Table = ({ data }) => {
+const MyTable = ({ data }) => {
   return (
-    <table>
+    <table >
+    {/* <Table striped bordered hover variant="dark"> */}
       <thead>
         <tr>
           <th>Filename</th>
@@ -54,11 +67,16 @@ const Prev = () => {
       .then((response) => response.json())
       .then((json) => {
         console.log(json)
-        setData(json.imageDB)})
+        setData(json.imageDB.reverse())
+      })
       .catch((error) => console.error(error));
   }, []);
 
-  return <Table data={data} />;
+  return (
+  <div className="Prev">
+  <MyTable data={data} />
+  </div>
+  );
 };
 
 export default Prev;
