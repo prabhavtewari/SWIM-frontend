@@ -85,7 +85,19 @@ function Home() {
                 // Send the image to the server using fetch or XMLHttpRequest
                 const formData = new FormData();
                 formData.append("image", blob, "image.jpg");
-                fetch("http://localhost:7000/", { method: "POST", body: formData });
+                fetch("http://localhost:7000/", { method: "POST", body: formData })
+                    .then(response => {
+                        // Handle response from server
+                        response.json().then(res => {
+                            console.log(res);
+                            setOpPath(res.file_path);
+                        });
+
+                    })
+                    .catch(error => {
+                        // Handle error from server
+                        console.error(error);
+                    });
             }, "image/jpeg", 0.9);
         }, 1000);
 
@@ -102,37 +114,46 @@ function Home() {
         videoSelect.onClick = getStream().then(getDevices).then(gotDevices);
     }
     async function handlePhotos(event) {
-        
-        
+
+
         const file = event.target.files[0];
-      
+
         // Check if uploaded file is an image
         if (!file.type.match('image.*')) {
-          console.log('Please upload an image file.');
-          return;
+            console.log('Please upload an image file.');
+            return;
         }
-      
+
         // Send image to backend server
         const formData = new FormData();
         formData.append('photo', file);
-      
+
         fetch('http://localhost:7000/detect/uploadFile', {
-          method: 'POST',
-          body: formData
+            method: 'POST',
+            body: formData
         })
-        .then(response => {
-          // Handle response from server
-          response.json().then( res =>{
-            console.log(res);
-            setOpPath(res.file_path);
-          });
-          
-        })
-        .catch(error => {
-          // Handle error from server
-          console.error(error);
-        });
-      }
+            .then(response => {
+                // Handle response from server
+                response.json().then(res => {
+                    console.log(res);
+                    setOpPath(res.file_path);
+                });
+
+            })
+            .catch(error => {
+                // Handle error from server
+                console.error(error);
+            });
+    }
+
+    function formatUrl(url) {
+        // Replace backslashes with forward slashes
+        url = url.replace(/[\\]/g, '/');
+        // Replace colon after http with double forward slashes
+        url = url.replace(/[":/"]/g, '://');
+        // Return formatted URL
+        return url;
+    }
 
     return (
         <div className="App">
@@ -157,7 +178,7 @@ function Home() {
                         <Col className="upload-photo mx-3 my-3 py-3 px-3 rounded">
                             <Form.Group controlId="formFile" className="mb-3">
                                 <Form.Label className='h3 my-3'>Upload Photo</Form.Label>
-                                <Form.Control type="file" onChange={(e)=>{handlePhotos(e)}}/>
+                                <Form.Control type="file" onChange={(e) => { handlePhotos(e) }} />
                             </Form.Group>
                         </Col>
                         <Col className='select-camera mx-3 my-3 py-3 px-3 rounded'>
@@ -170,7 +191,7 @@ function Home() {
                             </Form.Group>
                         </Col>
                     </Row>
-                    <Link to= "prev">
+                    <Link to="prev">
                         <Button variant="outline-light w-100" onClick={(e) => console.log("Redirect")}>View Previously Analysed Images</Button>
                     </Link>
                     <video autoPlay muted playsInline ref={videoElement}></video>
